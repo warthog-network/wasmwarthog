@@ -1,6 +1,6 @@
 [package]
 name = "wasmwarthog"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["warthogfrance <warthogfrance@proton.me>"]
 edition = "2018"
 
@@ -23,6 +23,10 @@ getrandom = { version = "0.2", features = ["js"] }
 hex = "0.4.3"
 sha2 = "0.10.8"
 ripemd = "0.1.3"
+reqwest = { version = "0.12.9", features = ["blocking"] }
+serde = { version = "1.0.214", features = ["derive"] }
+serde_json = "1.0.132"
+wasm-bindgen-futures = "0.4.45"
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.34"

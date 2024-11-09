@@ -1,11 +1,34 @@
 mod utils;
 use getrandom::getrandom;
 use ripemd::Ripemd160;
+
+use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use wasm_bindgen::prelude::*;
 use k256::ecdsa::{ SigningKey, VerifyingKey};
 
 
+
+
+#[derive(Serialize, Deserialize)]
+struct Response<T> {
+    code: u32,
+    data: T,
+}
+
+#[wasm_bindgen]
+#[derive(Serialize, Deserialize)]
+pub struct ChainHead {
+    difficulty: f64,
+    hash: String,
+    height: i64,
+    is_janushash: bool,
+    pub(crate) pinHash: String,
+    pub(crate) pinHeight: i32,
+    synced: bool,
+    worksum: f64,
+    worksumHex: String,
+}
 
 #[wasm_bindgen]
 pub fn generate_private_key() -> String {
@@ -31,8 +54,11 @@ pub fn generate_address(public_key : String) -> String {
 }
 
 #[wasm_bindgen]
-pub fn fetch_tx_data() {
-    todo!()
+pub async fn fetch_tx_data(node_url : String) -> ChainHead {
+    let request = reqwest::get(format!("{}/chain/head", node_url)).await.unwrap();
+    let request_text = request.text().await.unwrap();
+    let resp: Response<ChainHead> = serde_json::from_str(&request_text).unwrap();
+    resp.data
 }
 
 pub fn make_tx(pin_height : u32, pin_hash : String, nonce_id: u32, fee_e8 : u64, amount_e8: u64, to : String, pk: String) -> String{
